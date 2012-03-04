@@ -2,6 +2,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Locale;
@@ -55,9 +56,12 @@ public class Main {
 			}
 		}
 
-		for (Student s : studenti.values()) {
+		Iterator<Student> sit = studenti.values().iterator();
+		while (sit.hasNext()) {
+			Student s = sit.next();
+
 			if (s.nestuduje()) {
-				studenti.remove(s.osobniCislo);
+				sit.remove();
 				continue;
 			}
 				
@@ -137,9 +141,12 @@ public class Main {
                            pracoviste.get(p.pracoviste) + 1);
 		}
 
-		for (String p : pracoviste.keySet())
+		Iterator<String> pit = pracoviste.keySet().iterator();
+		while (pit.hasNext()) {
+			String p = pit.next();
 			if (pracoviste.get(p) == 0)
-				pracoviste.remove(p);
+				pit.remove();
+		}
 
 		tmpList = new ArrayList<Map.Entry<String, Integer>>
                                               (pracoviste.entrySet());
