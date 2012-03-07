@@ -7,10 +7,17 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Locale;
 
+import java.io.PrintWriter;
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
+
 import java.text.Collator;
+
 
 public class Main {
 	public static void main(String[] argv) {
+		PrintWriter out;
 		List<Akce> akce;
 		ArrayList<Map.Entry<String, Integer>> tmpList;
 		String inFile, outFile, stringIdentifier;
@@ -28,6 +35,7 @@ public class Main {
 
 
 		inFile = outFile = null;
+		out = null;
 		pocet = pocetZruseni = pocetSkutecneZapsanych = 0;
 
 		studenti = new HashMap<String, Student>();
@@ -38,8 +46,28 @@ public class Main {
 		cviceni = new HashMap<Integer, Predmet>();
 		seminare = new HashMap<Integer, Predmet>();
 
-		inFile = argv[0];
+		for (String arg : argv)
+			if (arg.charAt(0) == '-') {
+				if (arg.charAt(1) == 'i')
+					inFile = arg.substring(2);
+				else if (arg.charAt(1) == 'o')
+					outFile = arg.substring(2);
+			}
 
+		if (outFile == null || inFile == null) {
+			System.err.println("Missing input or output file");
+			System.exit(1);
+		}
+
+		try {
+			out = new PrintWriter(
+					new BufferedOutputStream(
+					new FileOutputStream(outFile)));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			out.close();
+			System.exit(1);
+		}
 		akce = new TxtReader().getData(inFile);
 
 		for (Akce a : akce) {
@@ -75,7 +103,7 @@ public class Main {
 						idPredmetu.put(stringIdentifier + a.typ, a.id);
 						predmety.put(stringIdentifier, null);
 					}
-					prednasky.get(a.id).pocet ++;
+					prednasky.get(a.id).vlozitStudenta(a.osobniCislo);
 				} else if (a.typ.equals("Cv")) {
 					if (!cviceni.containsKey(a.id)) {
 						cviceni.put(a.id, new Predmet(a.id, a.pracoviste, 
@@ -83,7 +111,7 @@ public class Main {
 						idPredmetu.put(stringIdentifier + a.typ, a.id);
 						predmety.put(stringIdentifier, null);
 					}
-					cviceni.get(a.id).pocet ++;
+					cviceni.get(a.id).vlozitStudenta(a.osobniCislo);
 				} else if (a.typ.equals("Se")) {
 					if (!seminare.containsKey(a.id)) {
 						seminare.put(a.id, new Predmet(a.id, a.pracoviste, 
@@ -91,7 +119,7 @@ public class Main {
 						idPredmetu.put(stringIdentifier + a.typ, a.id);
 						predmety.put(stringIdentifier, null);
 					}
-					seminare.get(a.id).pocet ++;
+					seminare.get(a.id).vlozitStudenta(a.osobniCislo);
 				} else 
 					assert false;
 
@@ -103,7 +131,7 @@ public class Main {
 			if (!pracoviste.containsKey(p.pracoviste))
 				pracoviste.put(p.pracoviste, 0);
 			pracoviste.put(p.pracoviste, 
-                           pracoviste.get(p.pracoviste) + 1);
+                           pracoviste.get(p.pracoviste) + p.pocet());
 
 			id = idPredmetu.get(p.pracoviste
                               + p.nazev
@@ -124,7 +152,7 @@ public class Main {
 			if (!pracoviste.containsKey(p.pracoviste))
 				pracoviste.put(p.pracoviste, 0);
 			pracoviste.put(p.pracoviste, 
-                           pracoviste.get(p.pracoviste) + 1);
+                           pracoviste.get(p.pracoviste) + p.pocet());
 
 			id = idPredmetu.get(p.pracoviste
                                       + p.nazev
@@ -138,7 +166,7 @@ public class Main {
 			if (!pracoviste.containsKey(p.pracoviste))
 				pracoviste.put(p.pracoviste, 0);
 			pracoviste.put(p.pracoviste, 
-                           pracoviste.get(p.pracoviste) + 1);
+                           pracoviste.get(p.pracoviste) + p.pocet());
 		}
 
 		Iterator<String> pit = pracoviste.keySet().iterator();
@@ -162,24 +190,18 @@ public class Main {
 						}
 					});
 
-		System.out.printf("Počet všech předzápisových akcí: %d%n", akce.size());
-		System.out.printf("Počet zrušených akcí (delete): %d%n", pocetZruseni);
-		System.out.printf("Počet skutečně zapsaných akcí: %d%n", 
-                                                       pocetSkutecneZapsanych);
-		System.out.printf("Počet studentů: %d%n", studenti.size());
-/*
-		System.out.printf("Počet předmětů: %d%n", prednasky.size()
-                                                + cviceni.size()
-                                                + seminare.size());
-*/
-		System.out.printf("Počet předmětů: %d%n", predmety.size());
-		System.out.printf("Počet pracovišť: %d%n", pracoviste.size());
+		out.printf("Počet všech předzápisových akcí: %d%n", akce.size());
+		out.printf("Počet zrušených akcí (delete): %d%n", pocetZruseni);
+		out.printf("Počet skutečně zapsaných akcí: %d%n", 
+                                                pocetSkutecneZapsanych);
+		out.printf("Počet studentů: %d%n", studenti.size());
+		out.printf("Počet předmětů: %d%n", predmety.size());
+		out.printf("Počet pracovišť: %d%n", pracoviste.size());
 
 		i = 1;
-		for (Map.Entry<String, Integer> entry : tmpList) {
-			System.out.printf("%d. %s: %d%n", i, 
-                                      entry.getKey(), entry.getValue());
-			i++;
-		}
+		for (Map.Entry<String, Integer> entry : tmpList)
+			out.printf("%d. %s: %d%n", i++, entry.getKey(), entry.getValue());
+
+		out.close();
 	}
 }
