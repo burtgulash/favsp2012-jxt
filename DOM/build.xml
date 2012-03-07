@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="SAX" default="jar" basedir=".">
+	<property name="jar.file" value="jxtTXT_DOM_A10B0632P.jar" />
+
+	<target name="compile" depends="clean">
+		<javac srcdir="src" destdir="." encoding="UTF-8" 
+               includeantruntime="false" />
+	</target>
+
+	<target name="javadoc">
+		<mkdir dir="doc" />
+		<javadoc sourcepath="src" destdir="doc" 
+                 windowtitle="DOM"
+                 docencoding="UTF-8" charset="UTF-8" author="true">
+			<fileset dir="src" includes="**/*.java" />
+		</javadoc>
+	</target>
+
+	<target name="jar" depends="clean,compile,javadoc">
+		<jar destfile="${jar.file}">
+			<fileset dir="." includes="src/**/*.java" />
+			<fileset dir="." includes="jxt/**/*.class"/>
+			<fileset dir="." includes="doc/**/*" />
+			<manifest>
+				<attribute name="Main-Class" value="jxt/Hlavni" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="clean">
+		<delete file="${jar.file}" />
+		<delete dir="jxt" />
+		<delete dir="doc" />
+	</target>
+</project>
+

@@ -1,3 +1,8 @@
+package jxt;
+
+import jxt.aplikacni.*;
+import jxt.datova.*;
+
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
@@ -19,15 +24,18 @@ import java.io.UnsupportedEncodingException;
 
 public class Hlavni {
     public static void main(String[] argv) {
+        int pocetZruseni, pocetSkutecneZapsanych, i;
         String inFile, outFile;
-        int pocetZruseni = 0;
-        int pocetSkutecneZapsanych = 0;
+        PrintWriter out;
 
         Map<String, Student> studenti = new HashMap<String, Student>();
-        Map<String, Predmet2> predmety = new HashMap<String, Predmet2>();
+        Map<String, Predmet> predmety = new HashMap<String, Predmet>();
         Map<String, Integer> pracoviste = new HashMap<String, Integer>();
 
+        pocetZruseni = pocetSkutecneZapsanych = 0;
         inFile = outFile = null;
+        out = null;
+
         for (String arg : argv) {
             if (arg.charAt(0) == '-') {
                 if (arg.charAt(1) == 'i')
@@ -68,7 +76,7 @@ public class Hlavni {
 
                 if (!predmety.containsKey(identifikator))
                     predmety.put(identifikator,
-                         new Predmet2(a.pracoviste, a.nazev, a.semestr));
+                         new Predmet(a.pracoviste, a.nazev, a.semestr));
 
                 if (a.typ.equals("Př"))
                     predmety.get(identifikator).naPrednasce++;
@@ -83,7 +91,7 @@ public class Hlavni {
             }
         }
 
-        for (Predmet2 p : predmety.values()) {
+        for (Predmet p : predmety.values()) {
             if (!pracoviste.containsKey(p.pracoviste))
                 pracoviste.put(p.pracoviste, 0);
 
@@ -114,7 +122,6 @@ public class Hlavni {
                         }
                     });
 
-        PrintWriter out = null;
         try {
             out = new PrintWriter(
                     new OutputStreamWriter(
@@ -129,7 +136,7 @@ public class Hlavni {
             out.printf("Počet předmětů: %d%n", predmety.size());
             out.printf("Počet pracovišť: %d%n", pracoviste.size());
 
-            int i = 1;
+            i = 1;
             for (Map.Entry<String, Integer> en : tmpList)
                 out.printf("%d. %s: %d%n", i++, en.getKey(), en.getValue());
         } catch (FileNotFoundException e) {
