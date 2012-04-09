@@ -4,8 +4,36 @@ import java.math.BigInteger;
 import javax.xml.bind.*;
 import jxtsp.*;
 
+/**
+ * Hlavní třída, logika programu.
+ *
+ * @author Tomáš Maršálek, A10B0632P
+ */
 public class Main {
+	/**
+	 * Vstupní metoda programu.
+	 *
+	 * @param args Argumenty příkazové řádky.
+	 * @throws Exception Výjimky nejsou kontrolovány.
+	 */
 	public static void main(String[] args) throws Exception {
+		String x, y, i, d;
+
+		x = y = i = d = null;
+
+		for (String arg : args)
+			if (arg.charAt(0) == '-') {
+				if (arg.charAt(1) == 'x')
+					x = arg.substring(2);
+				if (arg.charAt(1) == 'y')
+					y = arg.substring(2);
+				if (arg.charAt(1) == 'i')
+					i = arg.substring(2);
+				if (arg.charAt(1) == 'd')
+					d = arg.substring(2);
+			}
+
+
 		JAXBContext c = JAXBContext.newInstance("jxtsp");
 		Unmarshaller u = c.createUnmarshaller();
 		JAXBElement<?> rozvrhoveAkce = (JAXBElement<?>) u.unmarshal(
@@ -48,9 +76,18 @@ public class Main {
 
 			predmet.nazev     = activity.getSubject().getValue();
 			predmet.typ       = activity.getSubject().getKind();
+
+			// Jednorázová akce, nemá čas.
+			if (activity.getTime() == null)
+				continue;
 			predmet.den       = activity.getTime().getDay();
+			predmet.semestr   = activity.getTime().getTerm();
 			predmet.zacatek   = activity.getTime().getStartTime();
 			predmet.konec     = activity.getTime().getEndTime();
+
+			// Jednorázová akce, nemá místo.
+			if (activity.getPlace() == null)
+				continue;
 			predmet.budova    = activity.getPlace().getBuilding();
 			predmet.mistnost  = activity.getPlace().getRoomNumber();
 
@@ -65,14 +102,25 @@ public class Main {
 		for (BigInteger id : zapsanaId)
 			predmety.add(index.get(id));
 
+		// Seřadit podle přirozeného řazení předmětů.
+		Collections.sort(predmety);
 
-		// TODO yo, sort tha shit.
 
-		// TODO yo, print tha shit.
+		// Vytvořit adresář pro výstupní soubory.
+		new File(d).mkdirs();
 
-		// TODO yo, xml tha shit.
 
-		System.out.println(rozvrhoveAkce.getValue());
+		// Zapsat předměty do kontrolního textového souboru.
+		PrintWriter out = new PrintWriter(
+							new OutputStreamWriter(
+							new BufferedOutputStream(
+							new FileOutputStream(
+								d + "rozvrh_" + i + ".txt")), "UTF-8"));
+
+		for (Predmet p : predmety)
+			out.printf("%s;%s;%s;%s;%s;%s;%s%n", p.nazev, p.typ, p.den, 
+									p.zacatek, p.konec, p.budova, p.mistnost);
+		out.close();
 	}
 }
 
