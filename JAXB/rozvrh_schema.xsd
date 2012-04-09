@@ -29,21 +29,21 @@
 		</xs:restriction>
 	</xs:simpleType>
 
+	<xs:complexType name="PredmetTyp">
+		<xs:sequence>
+			<xs:element name="nazev" type="xs:string" />
+			<xs:element name="typ" type="TypTyp" />
+			<xs:element name="semestr" type="SemestrTyp" />
+			<xs:element name="den" type="DenTyp" />
+			<xs:element name="zacatek" type="xs:time" />
+			<xs:element name="konec" type="xs:time" />
+		</xs:sequence>
+	</xs:complexType>
+
 	<xs:complexType name="StudentTyp">
 		<xs:sequence>
 			<xs:element name="osobnicislo" type="xs:string" />
-			<xs:element name="predmet" maxOccurs="unbounded">
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="nazev" type="xs:string" />
-						<xs:element name="typ" type="TypTyp" />
-						<xs:element name="semestr" type="SemestrTyp" />
-						<xs:element name="den" type="DenTyp" />
-						<xs:element name="zacatek" type="xs:time" />
-						<xs:element name="konec" type="xs:time" />
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
+			<xs:element name="predmet" maxOccurs="unbounded" type="PredmetTyp"/>
 		</xs:sequence>
 	</xs:complexType>
 
