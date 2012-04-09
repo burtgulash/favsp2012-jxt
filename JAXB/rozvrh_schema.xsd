@@ -3,24 +3,44 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 	<xs:complexType name="student">
 		<xs:sequence>
-			<xs:element name="jmeno" type="xs:string" />
-			<xs:element name="prijmeni" type="xs:string" />
 			<xs:element name="osobnicislo" type="xs:string" />
-			<xs:element name="rozvrh">
+			<xs:element name="predmet" maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="predmet" maxOccurs="unbounded">
-							<xs:complexType>
-								<xs:sequence>
-									<xs:element name="nazev" type="xs:string" />
-									<xs:element name="typ" type="xs:string" />
-									<xs:element name="semestr" type="xs:string" />
-									<xs:element name="den" type="xs:string" />
-									<xs:element name="zacatek" type="xs:string" />
-									<xs:element name="konec" type="xs:string" />
-								</xs:sequence>
-							</xs:complexType>
+						<xs:element name="nazev" type="xs:string" />
+						<xs:element name="typ">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="Cv" />
+									<xs:enumeration value="Se" />
+									<xs:enumeration value="Př" />
+									<xs:enumeration value="Neznámé" />
+								</xs:restriction>
+							</xs:simpleType>
 						</xs:element>
+						<xs:element name="semestr">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="ZS" />
+									<xs:enumeration value="LS" />
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="den">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="Po" />
+									<xs:enumeration value="Út" />
+									<xs:enumeration value="St" />
+									<xs:enumeration value="Čt" />
+									<xs:enumeration value="Pá" />
+									<xs:enumeration value="So" />
+									<xs:enumeration value="Ne" />
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="zacatek" type="xs:time" />
+						<xs:element name="konec" type="xs:time" />
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
