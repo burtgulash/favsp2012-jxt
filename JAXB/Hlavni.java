@@ -134,7 +134,6 @@ public class Hlavni {
 		Student student = new Student();
 
 		student.setOsobniCislo(zvoleneOsobniCislo);
-		student.setJmeno 
 	}
 }
 
