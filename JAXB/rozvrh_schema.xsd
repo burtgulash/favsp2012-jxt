@@ -37,12 +37,14 @@
 			<xs:element name="den" type="DenTyp" />
 			<xs:element name="zacatek" type="xs:time" />
 			<xs:element name="konec" type="xs:time" />
+			<xs:element name="budova" type="xs:string" />
+			<xs:element name="mistnost" type="xs:string" />
 		</xs:sequence>
 	</xs:complexType>
 
 	<xs:complexType name="StudentTyp">
 		<xs:sequence>
-			<xs:element name="osobnicislo" type="xs:string" />
+			<xs:element name="osobniCislo" type="xs:string" />
 			<xs:element name="predmet" maxOccurs="unbounded" type="PredmetTyp"/>
 		</xs:sequence>
 	</xs:complexType>
