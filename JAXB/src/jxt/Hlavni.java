@@ -1,7 +1,11 @@
+package jxt;
+
 import java.io.*;
 import java.util.*;
 import java.math.BigInteger;
 import javax.xml.bind.*;
+
+import jxt.aplikacni.Predmet;
 
 // JAXB balíky
 import jxtsp.*;
@@ -41,9 +45,9 @@ public class Hlavni {
         JAXBContext c = JAXBContext.newInstance("jxtsp");
         Unmarshaller u = c.createUnmarshaller();
         JAXBElement<?> rozvrhoveAkce = (JAXBElement<?>) u.unmarshal(
-                        new File("../zadani/data/rozvrhove-akce.xml"));
+                        new File(y));
         JAXBElement<?> predzapisoveAkce = (JAXBElement<?>) u.unmarshal(
-                        new File("../zadani/data/predzapisove-akce.xml"));
+                        new File(x));
 
         Map<BigInteger, Object> zapsane = new HashMap<BigInteger, Object>();
         Map<BigInteger, Predmet> index = new HashMap<BigInteger, Predmet>();
@@ -70,6 +74,7 @@ public class Hlavni {
 
 
         // Vybudovat index pro snadné dohledání údajů o předmětu.
+        // Index obsahuje pouze nejednorázové předměty.
         for (TimetableActivityType activity :
                       ((TimetableActivitiesOfFAVStudentsType) rozvrhoveAkce
                                           .getValue()).getTimetableActivity())
@@ -78,6 +83,8 @@ public class Hlavni {
 
             predmet.nazev     = activity.getSubject().getValue();
             predmet.typ       = activity.getSubject().getKind();
+            if (predmet.nazev == null || predmet.typ == null)
+                continue;
 
             // Jednorázová akce, nemá čas.
             if (activity.getTime() == null)
@@ -86,12 +93,19 @@ public class Hlavni {
             predmet.semestr   = activity.getTime().getTerm();
             predmet.zacatek   = activity.getTime().getStartTime();
             predmet.konec     = activity.getTime().getEndTime();
+            if (predmet.den == null 
+                || predmet.semestr == null
+                || predmet.zacatek == null 
+                || predmet.konec == null)
+                continue;
 
             // Jednorázová akce, nemá místo.
             if (activity.getPlace() == null)
                 continue;
             predmet.budova    = activity.getPlace().getBuilding();
             predmet.mistnost  = activity.getPlace().getRoomNumber();
+            if (predmet.budova == null || predmet.mistnost == null)
+                continue;
 
             index.put(activity.getId(), predmet);
         }
@@ -102,14 +116,16 @@ public class Hlavni {
                                  new LinkedList<BigInteger>(zapsane.keySet());
         List<Predmet> predmety = new ArrayList<Predmet>(zapsanaId.size());
         for (BigInteger id : zapsanaId)
-            predmety.add(index.get(id));
+            // Index může obsahovat neplatné předměty.
+            if (index.get(id) != null)
+                predmety.add(index.get(id));
 
         // Seřadit podle přirozeného řazení předmětů.
         Collections.sort(predmety);
 
 
         // Vytvořit adresář pro výstupní soubory.
-        new File(outDir).mkdirs();
+        File outDirFile = new File(outDir);
 
 
         // Zapsat předměty do kontrolního textového souboru.
@@ -117,10 +133,12 @@ public class Hlavni {
                             new OutputStreamWriter(
                             new BufferedOutputStream(
                             new FileOutputStream(
-                outDir + "rozvrh_" + zvoleneOsobniCislo + ".txt")), "UTF-8"));
+                            new File(outDirFile.getAbsolutePath(), 
+                    "rozvrh_" + zvoleneOsobniCislo + ".txt"))), "UTF-8"));
 
         for (Predmet p : predmety)
-            out.printf("%s;%s;%s;%s;%s;%s;%s%n", p.nazev, p.typ, p.den,
+            out.printf("%s;%s;%s;%s;%s;%s;%s%n", 
+                                    p.nazev, p.typ.value(), p.den.value(),
                                     p.zacatek, p.konec, p.budova, p.mistnost);
         out.close();
 
@@ -151,11 +169,11 @@ public class Hlavni {
         Marshaller m   = cm.createMarshaller();
         m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-        m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
 
         JAXBElement<?> rozvrh = factory.createStudent(student);
         m.marshal(rozvrh, new FileOutputStream(
-            outDir + "rozvrh_" + zvoleneOsobniCislo + ".xml"));
+                            new File(outDirFile.getAbsolutePath(), 
+                                "rozvrh_" + zvoleneOsobniCislo + ".xml")));
     }
 }
 
