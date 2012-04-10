@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data>
+	<dny>
+		<den cislo="1">Po</den>
+		<den cislo="2">Út</den>
+		<den cislo="3">St</den>
+		<den cislo="4">Čt</den>
+		<den cislo="5">Pá</den>
+		<den cislo="6">So</den>
+		<den cislo="7">Ne</den>
+	</dny>
+	<casy>
+		<hodina cislo="1">
+			<zacatek>7:30:00</zacatek>
+			<konec>8:15:00</konec>
+		</hodina>
+		<hodina cislo="2">
+			<zacatek>8:25:00</zacatek>
+			<konec>9:10:00</konec>
+		</hodina>
+		<hodina cislo="3">
+			<zacatek>9:20:00</zacatek>
+			<konec>10:5:00</konec>
+		</hodina>
+		<hodina cislo="4">
+			<zacatek>10:15:00</zacatek>
+			<konec>11:0:00</konec>
+		</hodina>
+		<hodina cislo="5">
+			<zacatek>11:10:00</zacatek>
+			<konec>11:55:00</konec>
+		</hodina>
+		<hodina cislo="6">
+			<zacatek>12:5:00</zacatek>
+			<konec>12:50:00</konec>
+		</hodina>
+		<hodina cislo="7">
+			<zacatek>13:0:00</zacatek>
+			<konec>13:45:00</konec>
+		</hodina>
+		<hodina cislo="8">
+			<zacatek>13:55:00</zacatek>
+			<konec>14:40:00</konec>
+		</hodina>
+		<hodina cislo="9">
+			<zacatek>14:50:00</zacatek>
+			<konec>15:35:00</konec>
+		</hodina>
+		<hodina cislo="10">
+			<zacatek>15:45:00</zacatek>
+			<konec>16:30:00</konec>
+		</hodina>
+		<hodina cislo="11">
+			<zacatek>16:40:00</zacatek>
+			<konec>17:25:00</konec>
+		</hodina>
+		<hodina cislo="12">
+			<zacatek>17:35:00</zacatek>
+			<konec>18:20:00</konec>
+		</hodina>
+		<hodina cislo="13">
+			<zacatek>18:30:00</zacatek>
+			<konec>19:15:00</konec>
+		</hodina>
+		<hodina cislo="14">
+			<zacatek>19:25:00</zacatek>
+			<konec>20:10:00</konec>
+		</hodina>
+	</casy>
+</data>
