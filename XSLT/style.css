@@ -1,4 +1,23 @@
+body
+{
+	font-family: sans-serif;
+}
+
 .tabulka td
 {
+	text-align: center;
 	border: 1px solid black;
+}
+
+.prednaska
+{
+	background-color: #E0E0E0;
+}
+.cviceni
+{
+	background-color: #009933;
+}
+.seminar
+{
+	background-color: #66FF33;
 }

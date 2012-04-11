@@ -21,29 +21,49 @@
 	<!-- Provést natural join políčka v tabulce a předmětů studenta. -->
 			<xsl:variable name="predmet" 
 						select="$this/student/predmet
-								[semestr    = $semestr 
-								and den     = $den 
-								and zacatek = $hodina/zacatek][1]" />
-	
-			<!-- 
-			     Vypočítat počet hodin předmětu (N) z rovnice:
-				 konec - start = N * 45 + (N - 1) * 10 
-              -->
-			<xsl:variable name="rozdilCasu" select="xs:time($predmet/konec)
-                       - xs:time($predmet/zacatek) + xs:time('00:10:00')" />
-			<xsl:variable name="colspan" 
-					select="(fn:hours-from-time($rozdilCasu) * 60 
-                          + fn:minutes-from-time($rozdilCasu)) 
-                          div 55" />
+						[semestr    = $semestr 
+						and den     = $den 
+						and xs:time(zacatek) = xs:time($hodina/zacatek)][1]" />
 
-			<td>
-				<xsl:if test="$colspan > 1">
-					<xsl:attribute name="colspan">
-						<xsl:value-of select="$colspan" />
-					</xsl:attribute>
-				</xsl:if>
-				<xsl:value-of select="$predmet/nazev" />
-			</td>
+			<xsl:if test="0 = count($this/student/predmet
+							[semestr    = $semestr 
+							and den     = $den 
+							and xs:time(zacatek) &lt; xs:time($hodina/zacatek)
+							and xs:time(konec) &gt;= xs:time($hodina/konec)])">
+				<!-- 
+					 Vypočítat počet hodin předmětu (N) z rovnice:
+					 konec - start = N * 45 + (N - 1) * 10 
+				  -->
+				<xsl:variable name="rozdilCasu" select="xs:time($predmet/konec)
+						   - xs:time($predmet/zacatek) + xs:time('00:10:00')" />
+				<xsl:variable name="colspan" 
+						select="(fn:hours-from-time($rozdilCasu) * 60 
+							  + fn:minutes-from-time($rozdilCasu)) 
+							  div 55" />
+
+				<td>
+					<xsl:if test="$colspan > 1">
+						<xsl:attribute name="colspan">
+							<xsl:value-of select="$colspan" />
+						</xsl:attribute>
+					</xsl:if>
+					<xsl:choose>
+						<xsl:when test="$predmet/typ = 'Př'">
+							<xsl:attribute name="class">prednaska</xsl:attribute>
+						</xsl:when>
+						<xsl:when test="$predmet/typ = 'Cv'">
+							<xsl:attribute name="class">cviceni</xsl:attribute>
+						</xsl:when>
+						<xsl:when test="$predmet/typ = 'Se'">
+							<xsl:attribute name="class">seminar</xsl:attribute>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:attribute name="class">prazdne</xsl:attribute>
+						</xsl:otherwise>
+					</xsl:choose>
+					<xsl:value-of select="$predmet/nazev" />
+				</td>
+			</xsl:if>
 		</xsl:for-each>
 	</tr>
 </xsl:template>

@@ -11,31 +11,31 @@
 	</dny>
 	<casy>
 		<hodina cislo="1">
-			<zacatek>7:30:00</zacatek>
-			<konec>8:15:00</konec>
+			<zacatek>07:30:00</zacatek>
+			<konec>08:15:00</konec>
 		</hodina>
 		<hodina cislo="2">
-			<zacatek>8:25:00</zacatek>
-			<konec>9:10:00</konec>
+			<zacatek>08:25:00</zacatek>
+			<konec>09:10:00</konec>
 		</hodina>
 		<hodina cislo="3">
-			<zacatek>9:20:00</zacatek>
-			<konec>10:5:00</konec>
+			<zacatek>09:20:00</zacatek>
+			<konec>10:05:00</konec>
 		</hodina>
 		<hodina cislo="4">
 			<zacatek>10:15:00</zacatek>
-			<konec>11:0:00</konec>
+			<konec>11:00:00</konec>
 		</hodina>
 		<hodina cislo="5">
 			<zacatek>11:10:00</zacatek>
 			<konec>11:55:00</konec>
 		</hodina>
 		<hodina cislo="6">
-			<zacatek>12:5:00</zacatek>
+			<zacatek>12:05:00</zacatek>
 			<konec>12:50:00</konec>
 		</hodina>
 		<hodina cislo="7">
-			<zacatek>13:0:00</zacatek>
+			<zacatek>13:00:00</zacatek>
 			<konec>13:45:00</konec>
 		</hodina>
 		<hodina cislo="8">

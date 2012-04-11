@@ -16,9 +16,9 @@ print "\t</dny>"
 print "\t<casy>"
 for i in range(14):
 	print '\t\t<hodina cislo="%d">' % (i + 1)
-	print '\t\t\t<zacatek>%d:%d:00</zacatek>' % (cas // 60, cas % 60)
+	print '\t\t\t<zacatek>%02d:%02d:00</zacatek>' % (cas // 60, cas % 60)
 	cas += hodina
-	print '\t\t\t<konec>%d:%d:00</konec>' % (cas // 60, cas % 60)
+	print '\t\t\t<konec>%02d:%02d:00</konec>' % (cas // 60, cas % 60)
 	cas += prestavka
 	print '\t\t</hodina>'
 print "\t</casy>"
