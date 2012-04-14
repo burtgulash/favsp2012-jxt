@@ -4,11 +4,67 @@
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:fn="http://www.w3.org/2005/xpath-functions">
-	<xsl:output method="html" indent="yes" />
 	
 <xsl:variable name="this" select="/" />
 <xsl:variable name="data" select="document('data.xml')" />
 
+
+<xsl:template name="zobrazitPredmety">
+	<xsl:param name="predmety" />
+	<xsl:for-each select="$predmety/predmet">
+
+		<xsl:variable name="mezeraCasu" select="
+		xs:time(zacatek) - xs:time(preceding-sibling::predmet[1]/konec) - xs:dayTimeDuration('PT10M')" />
+		<xsl:variable name="mezeraHodin" 
+				select="(fn:hours-from-duration($mezeraCasu) * 60 
+					  + fn:minutes-from-duration($mezeraCasu)) 
+					  div 55" />
+		<!-- Kladná mezera -> vytvořit buňku s mezerou. -->
+		<xsl:if test="$mezeraHodin > 1">
+			<td>
+				<xsl:attribute name="colspan">
+					<xsl:value-of select="$mezeraHodin" />
+				</xsl:attribute>
+			</td>
+		</xsl:if>
+
+		<!-- Záporná mezera znamená kolizi. -->
+		<xsl:if test="$mezeraHodin &lt; 0">
+			<!-- Zajebatý xslt, seru na to kurva. -->
+			</tr><tr>
+		</xsl:if>
+
+		<xsl:variable name="rozdilCasu" select="
+					xs:time(konec) - xs:time(zacatek) + xs:time('00:10:00')" />
+		<xsl:variable name="colspan" 
+				select="(fn:hours-from-time($rozdilCasu) * 60 
+					  + fn:minutes-from-time($rozdilCasu)) 
+					  div 55" />
+
+		<td>
+			<xsl:if test="$colspan > 1">
+				<xsl:attribute name="colspan">
+					<xsl:value-of select="$colspan" />
+				</xsl:attribute>
+			</xsl:if>
+			<xsl:choose>
+				<xsl:when test="typ = 'Př'">
+					<xsl:attribute name="class">prednaska</xsl:attribute>
+				</xsl:when>
+				<xsl:when test="typ = 'Cv'">
+					<xsl:attribute name="class">cviceni</xsl:attribute>
+				</xsl:when>
+				<xsl:when test="typ = 'Se'">
+					<xsl:attribute name="class">seminar</xsl:attribute>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:attribute name="class">prazdne</xsl:attribute>
+				</xsl:otherwise>
+			</xsl:choose>
+			<xsl:value-of select="nazev" />
+		</td>
+	</xsl:for-each>
+</xsl:template>
 
 <xsl:template match="den">
 	<xsl:param name="semestr" />
@@ -16,55 +72,17 @@
 
 	<tr>
 		<th><xsl:value-of select="." /></th>
-		<xsl:for-each select="$data/data/casy/hodina">
-			<xsl:variable name="hodina" select="." />
-	<!-- Provést natural join políčka v tabulce a předmětů studenta. -->
-			<xsl:variable name="predmet" 
-						select="$this/student/predmet
-						[semestr    = $semestr 
-						and den     = $den 
-						and xs:time(zacatek) = xs:time($hodina/zacatek)][1]" />
+		<xsl:variable name="serazenePredmety">
+			<xsl:for-each select="$this/student/predmet[den = $den
+												and semestr = $semestr]">
+				<xsl:sort select="zacatek" />
+				<xsl:copy-of select="." />
+			</xsl:for-each>
+		</xsl:variable>
 
-			<xsl:if test="0 = count($this/student/predmet
-							[semestr    = $semestr 
-							and den     = $den 
-							and xs:time(zacatek) &lt; xs:time($hodina/zacatek)
-							and xs:time(konec) &gt;= xs:time($hodina/konec)])">
-				<!-- 
-					 Vypočítat počet hodin předmětu (N) z rovnice:
-					 konec - start = N * 45 + (N - 1) * 10 
-				  -->
-				<xsl:variable name="rozdilCasu" select="xs:time($predmet/konec)
-						   - xs:time($predmet/zacatek) + xs:time('00:10:00')" />
-				<xsl:variable name="colspan" 
-						select="(fn:hours-from-time($rozdilCasu) * 60 
-							  + fn:minutes-from-time($rozdilCasu)) 
-							  div 55" />
-
-				<td>
-					<xsl:if test="$colspan > 1">
-						<xsl:attribute name="colspan">
-							<xsl:value-of select="$colspan" />
-						</xsl:attribute>
-					</xsl:if>
-					<xsl:choose>
-						<xsl:when test="$predmet/typ = 'Př'">
-							<xsl:attribute name="class">prednaska</xsl:attribute>
-						</xsl:when>
-						<xsl:when test="$predmet/typ = 'Cv'">
-							<xsl:attribute name="class">cviceni</xsl:attribute>
-						</xsl:when>
-						<xsl:when test="$predmet/typ = 'Se'">
-							<xsl:attribute name="class">seminar</xsl:attribute>
-						</xsl:when>
-						<xsl:otherwise>
-							<xsl:attribute name="class">prazdne</xsl:attribute>
-						</xsl:otherwise>
-					</xsl:choose>
-					<xsl:value-of select="$predmet/nazev" />
-				</td>
-			</xsl:if>
-		</xsl:for-each>
+		<xsl:call-template name="zobrazitPredmety">
+			<xsl:with-param name="predmety" select="$serazenePredmety" />
+		</xsl:call-template>
 	</tr>
 </xsl:template>
 
