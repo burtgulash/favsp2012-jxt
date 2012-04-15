@@ -11,7 +11,8 @@
 
 <xsl:template name="zaSemestr">
 	<xsl:param name="semestr" />
-	<semestr zimniLetni="{$semestr}">
+	<semestr>
+		<zimniLetni><xsl:value-of select="$semestr" /></zimniLetni>
 		<xsl:for-each select="$data/data/dny/den">
 			<xsl:variable name="den" select="." />
 			<radka>
@@ -67,16 +68,20 @@
 		<rowspan><xsl:value-of select="$maxKolizi" /></rowspan>
 		<xsl:variable name="predmety" select="predmet" />
 		<xsl:apply-templates select="den" mode="faze2" />
-		<xsl:for-each select="0 to xs:integer($maxKolizi) - 1">
+		<xsl:for-each select="1 to $maxKolizi">
 			<xsl:variable name="i" select="." />
 			<faze2radka>
+				<!-- Pro každou řádku vybrat ty předměty, které mají $i
+					 předcházejících předmětů konfliktních. -->
 				<xsl:for-each select=
-				"$predmety[
-					count(
-						$predmety[xs:time(zacatek) &lt;= xs:time(../zacatek)
-						   	  and xs:time(konec) &gt;= xs:time(../zacatek)]
-						 ) = $i]">
-					<xsl:value-of select="nazev" />
+	"for $p in $predmety
+		return
+			if (count(
+					$predmety[xs:time(zacatek) &lt;= xs:time($p/zacatek)
+						and xs:time(konec) &gt;= xs:time($p/zacatek)]) = $i)
+				then $p
+				else ()">
+					<xsl:copy-of select="." />
 				</xsl:for-each>
 			</faze2radka>
 		</xsl:for-each>
