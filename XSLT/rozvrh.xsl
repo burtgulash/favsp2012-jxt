@@ -7,6 +7,7 @@
 <xsl:output method="html"/>
 	
 <xsl:variable name="this" select="/" />
+<xsl:variable name="osobniCislo" select="$this/student/osobniCislo" />
 <xsl:variable name="data" select="document('data.xml')" />
 
 <xsl:template name="zaSemestr">
@@ -161,6 +162,7 @@
 		<link rel="stylesheet" type="text/css" href="style.css" />
 	</head>
 	<body>
+		<h1>Rozvrh studenta <xsl:value-of select="$osobniCislo" /></h1>
 		<xsl:call-template name="vytvoritRozvrh">
 			<xsl:with-param name="semestr" select="'ZS'" />
 		</xsl:call-template>
@@ -179,9 +181,31 @@
 	
 	<table class="tabulka">
 		<tr>
-			<th></th>
+			<td class="hlavni_bunka roztahnuta_bunka tucne">
+				<xsl:value-of select="$semestr" />
+			</td>
 			<xsl:for-each select="$data/data/casy/hodina">
-				<td><xsl:value-of select="@cislo" /></td>
+				<td class="hlavni_bunka">
+					<table>
+						<tr>
+							<td class="cas vlevo">
+								<xsl:value-of 
+										select="fn:substring(zacatek,1,5)" />
+							</td>
+						</tr>
+						<tr>
+							<td class="uprostred vetsi roztahnuta_bunka">
+								<xsl:value-of select="@cislo" />
+							</td>
+						</tr>
+						<tr>
+							<td class="cas vpravo">
+								<xsl:value-of
+										select="fn:substring(konec,1,5)" />
+							</td>
+						</tr>
+					</table>
+				</td>
 			</xsl:for-each>
 		</tr>
 		<xsl:for-each select="$rozvrh/faze3den">
@@ -190,7 +214,7 @@
 				<tr>
 					<!-- Vytvořit první sloupec - názvy dnů. -->
 					<xsl:if test="position() = 1">
-						<th>	
+						<th class="hlavni_bunka tucne vetsi">	
 							<xsl:if test="$den/rowspan > 1">
 								<xsl:attribute name="rowspan" 
 												select="$den/rowspan" />
@@ -213,8 +237,7 @@
 		<!-- Neprázdný předmět pokud existuje název. -->
 		<xsl:if test="count(nazev) > 0">
 			<xsl:if test="colspan > 1">
-				<xsl:attribute name="colspan" 
-								select="colspan" />
+				<xsl:attribute name="colspan" select="colspan" />
 			</xsl:if>
 			<xsl:choose>
 				<xsl:when test="typ = 'Př'">
@@ -228,7 +251,20 @@
 				</xsl:when>
 				<xsl:otherwise />
 			</xsl:choose>
-			<xsl:value-of select="nazev" />
+			<table width="100%">
+				<tr>
+					<td class="uprostred">
+						<xsl:value-of select="nazev" />
+					</td>
+				</tr>
+				<tr>
+					<td class="uprostred mensi">
+						<xsl:value-of
+							 select="budova" />-<xsl:value-of
+								 select="mistnost" />
+					</td>
+				</tr>
+			</table>
 		</xsl:if>
 	</td>
 </xsl:template>

@@ -3,15 +3,72 @@ body
 	font-family: sans-serif;
 }
 
-.tabulka td, .tabulka th
+
+.tabulka
 {
 	text-align: center;
+	border: 1px solid black;
+	border-spacing: 1px;
+	padding: 2px;
+}
+
+.tabulka th
+{
+	padding: 4px;
+}
+
+.hlavni_bunka
+{
+	border: 1px solid black;
+}
+
+.mensi
+{
+	font-size: 10px;
+}
+.vetsi
+{
+	font-size: 15px;
+}
+
+.tucne
+{
+	font-weight: bold;
+}
+
+.cas
+{
+	font-size: 10px;
+}
+.vlevo
+{
+	text-align: left;
+}
+.uprostred
+{
+	text-align: center;
+}
+.vpravo
+{
+	text-align: right;
+}
+.roztahnuta_bunka
+{
+	width: 50px;
+}
+
+.plna_sirka
+{
+	width="100%";
+}
+
+.cviceni, .seminar, .prednaska {
 	border: 1px solid black;
 }
 
 .prednaska
 {
-	background-color: #E0E0E0;
+	background-color: #D0D0D0;
 }
 .cviceni
 {
@@ -20,4 +77,9 @@ body
 .seminar
 {
 	background-color: #66FF33;
+}
+.prazdny
+{
+	background-color: white;
+	border-width: 0;
 }
